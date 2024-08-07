@@ -1,10 +1,10 @@
-const tasks = [
-    {
-        "id": 1,
-        "title": "Tarea 1",
-        "description": "Descripción de la tarea 1",
-        
-    }
-]
+const mysql = require('mysql2/promise');
 
-module.exports = tasks
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'tasks_db'
+});
+
+module.exports = pool;
