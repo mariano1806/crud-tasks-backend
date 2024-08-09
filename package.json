@@ -2,8 +2,9 @@
   "name": "practica-crud-de-tareas-con-backend-esquivel-mariano",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "node --watch src/app.js"
+    "dev": "node --watch src/index.js"
   },
   "keywords": [],
   "author": "",

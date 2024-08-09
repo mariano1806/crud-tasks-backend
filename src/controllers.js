@@ -1,24 +1,21 @@
-const express = require('express');
-const app = express();
-const pool = require('./database');
+import { conectar } from "./database.js";
+import express from 'express';
 
-app.use(express.text());
+const app = express();
+const pool = conectar();
+
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Hola mundo!');
-});
-
-app.get('/tasks', async (req, res) => {
+export const getTasks = async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM tasks');
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
-});
+};
 
-app.get('/tasks/:id', async (req, res) => {
+export const getTaskById = async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM tasks WHERE id = ?', [req.params.id]);
         if (rows.length === 0) {
@@ -28,9 +25,9 @@ app.get('/tasks/:id', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Error al consultar la base de datos' });
     }
-});
+};
 
-app.post('/tasks', async (req, res) => {
+export const createTask = async (req, res) => {
     const { title, description, isComplete } = req.body;
     if (!title || typeof title !== 'string' || title.length > 255) {
         return res.status(400).json({ error: 'Título inválido' });
@@ -48,9 +45,9 @@ app.post('/tasks', async (req, res) => {
         console.error('Error al insertar en la base de datos:', err);
         res.status(500).json({ error: 'Error al insertar en la base de datos' });
     }
-});
+};
 
-app.put('/tasks/:id', async (req, res) => {
+export const updateTask = async (req, res) => {
     const { title, description, isComplete } = req.body;
     if (title && (typeof title !== 'string' || title.length > 255)) {
         return res.status(400).json({ error: 'Título inválido' });
@@ -70,9 +67,9 @@ app.put('/tasks/:id', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Error al actualizar la base de datos' });
     }
-});
+};
 
-app.delete('/tasks/:id', async (req, res) => {
+export const deleteTask = async (req, res) => {
     try {
         const [result] = await pool.query('DELETE FROM tasks WHERE id = ?', [req.params.id]);
         if (result.affectedRows === 0) {
@@ -82,8 +79,4 @@ app.delete('/tasks/:id', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Error al eliminar de la base de datos' });
     }
-});
-
-app.listen(3000, () => {
-    console.log('Servidor corriendo en el puerto 3000');
-});
+};
